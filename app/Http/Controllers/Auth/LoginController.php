@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\User;
+use App\Role;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Laravel\Socialite\Facades\Socialite;
 use Illuminate\Support\Facades\Auth;
@@ -69,6 +70,9 @@ class LoginController extends Controller
           $user->email = $userSocial->email;
           $user->password = bcrypt(123456);
           $user->save();
+          $user
+         ->roles()
+         ->attach(Role::where('name', 'user')->first());
           Auth::login($user);
           return redirect('/home');
         }
