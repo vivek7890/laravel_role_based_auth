@@ -9,6 +9,14 @@ use Socialite;
 
 class AuthController extends Controller
 {
+    /*protected function authenticated($request, $user)
+    {
+        if($user->role === 'admin') {
+            return redirect()->intended('/admin-home');
+        }
+
+        return redirect()->intended('/home');
+    }*/
     public function redirectToProvider($provider)
     {
         return Socialite::driver($provider)->redirect();

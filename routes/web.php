@@ -24,4 +24,12 @@ Auth::routes();
 Route::get('login/{service}', 'Auth\LoginController@redirectToProvider');
 Route::get('login/{service}/callback', 'Auth\LoginController@handleProviderCallback');
 Route::get('/home', 'HomeController@index')->name('home');
-Route::get('/admin-home', 'HomeController@index')->middleware('AuthAdmin');
+Route::get('/adminlte', 'adminLte@adminLte');
+
+Route::group(['middleware' => 'AuthAdmin', 'prefix' => 'admin'], function () {
+    Route::resource('authors', 'AuthorsController');
+    Route::resource('books', 'BooksController');
+    Route::get('home', 'HomeController@index');
+});
+Route::delete('authors/mass_destroy', 'AuthorsController@massDestroy')->name('authors.mass_destroy');
+Route::resource('authors', 'AuthorsController');
