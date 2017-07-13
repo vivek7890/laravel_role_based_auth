@@ -15,7 +15,7 @@ class AuthUserMiddleware
      */
     public function handle($request, Closure $next)
     {
-        $request->user()->authorizeRoles(['user']);
+        $request->user()->authorizeRoles('user');
         return $next($request);
     }
 }

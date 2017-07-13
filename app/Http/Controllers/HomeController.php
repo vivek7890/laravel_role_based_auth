@@ -21,10 +21,27 @@ class HomeController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
+     public function redirectPath()
+     {
+         // Logic that determines where to send the user
+         if (\Auth::user()->hasRole('admin')) {
+             return redirect()->route('/admin/home');
+         }
+
+         return redirect()->route('/home');
+     }
     public function index(Request $request)
     {
-        $request->user()->authorizeRoles(['user', 'admin']);
-        return view('home');
+        if($request->user()->hasRole('user')){
+          return view('home');
+        }
+
+    }
+    public function indexAdmin(Request $request)
+    {
+      if($request->user()->hasRole('admin')){
+        return view('homeadmin');
+      }
     }
       /*
       public function someAdminStuff(Request $request)

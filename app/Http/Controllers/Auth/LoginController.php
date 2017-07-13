@@ -8,6 +8,7 @@ use App\Role;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Laravel\Socialite\Facades\Socialite;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\Request;
 
 class LoginController extends Controller
 {
@@ -29,7 +30,7 @@ class LoginController extends Controller
      *
      * @var string
      */
-    protected $redirectTo = '/home';
+    //protected $redirectTo = '/home';
 
     /**
      * Create a new controller instance.
@@ -75,6 +76,16 @@ class LoginController extends Controller
          ->attach(Role::where('name', 'user')->first());
           Auth::login($user);
           return redirect('/home');
+        }
+    }
+    public function authenticated(Request $request)
+    {
+        // Logic that determines where to send the user
+        if($request->user()->hasRole('user')){
+            return redirect('/user/home');
+        }
+        if($request->user()->hasRole('admin')){
+            return redirect('/admin/home');
         }
     }
 }

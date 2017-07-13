@@ -19,17 +19,20 @@ Auth::routes();
 
 Route::get('/home', 'HomeController@index')->name('home');
 
-Auth::routes();
+//Auth::routes();
 
 Route::get('login/{service}', 'Auth\LoginController@redirectToProvider');
 Route::get('login/{service}/callback', 'Auth\LoginController@handleProviderCallback');
+Route::group(['middleware' => 'AuthUser', 'prefix' => 'user'], function () {
 Route::get('/home', 'HomeController@index')->name('home');
-Route::get('/adminlte', 'adminLte@adminLte');
+});
+
 
 Route::group(['middleware' => 'AuthAdmin', 'prefix' => 'admin'], function () {
     Route::resource('authors', 'AuthorsController');
     Route::resource('books', 'BooksController');
-    Route::get('home', 'HomeController@index');
+    Route::get('/home', 'HomeController@indexAdmin');
+    Route::get('/adminlte', 'adminLte@adminLte');
 });
 Route::delete('authors/mass_destroy', 'AuthorsController@massDestroy')->name('authors.mass_destroy');
 Route::resource('authors', 'AuthorsController');
