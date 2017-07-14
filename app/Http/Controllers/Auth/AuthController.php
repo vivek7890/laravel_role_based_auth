@@ -17,7 +17,7 @@ class AuthController extends Controller
 
         return redirect()->intended('/home');
     }*/
-    
+
     public function redirectToProvider($provider)
     {
         return Socialite::driver($provider)->redirect();
@@ -39,6 +39,7 @@ class AuthController extends Controller
         return User::create([
             'name'     => $user->name,
             'email'    => $user->email,
+            'image'    => $user->image,
             'provider' => $provider,
             'provider_id' => $user->id
         ]);

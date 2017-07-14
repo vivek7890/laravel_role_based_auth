@@ -7,7 +7,7 @@
             <div class="panel panel-default">
                 <div class="panel-heading">Register</div>
                 <div class="panel-body">
-                    <form class="form-horizontal" method="POST" action="{{ route('register') }}">
+                    <form class="form-horizontal" enctype="multipart/form-data" method="POST" action="{{ route('register') }}">
                         {{ csrf_field() }}
 
                         <div class="form-group{{ $errors->has('name') ? ' has-error' : '' }}">
@@ -37,7 +37,19 @@
                                 @endif
                             </div>
                         </div>
-
+                        <div class="form-group{{ $errors->has('userimg') ? ' has-error' : '' }}">
+                            <label for="imageInput" class="col-md-4 control-label">File input</label>
+                            <div class="col-md-6">
+                              <input data-preview="#preview" class="form-control" name="userimg" type="file" id="imageInput">
+                              <img class="col-sm-6" class="form-control" id="preview"  src="" ></img>
+                              <p class="help-block" class="form-control">Example block-level help text here.</p>
+                              @if ($errors->has('userimg'))
+                                  <span class="help-block">
+                                      <strong>{{ $errors->first('userimg') }}</strong>
+                                  </span>
+                              @endif
+                            </div>
+                        </div>
                         <div class="form-group{{ $errors->has('password') ? ' has-error' : '' }}">
                             <label for="password" class="col-md-4 control-label">Password</label>
 

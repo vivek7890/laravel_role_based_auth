@@ -7,6 +7,9 @@ use App\Role;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Foundation\Auth\RegistersUsers;
+use Illuminate\Support\Facades\Input;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Redirect;
 
 class RegisterController extends Controller
 {
@@ -28,7 +31,7 @@ class RegisterController extends Controller
      *
      * @var string
      */
-    protected $redirectTo = '/home';
+    //protected $redirectTo = '/home';
 
     /**
      * Create a new controller instance.
@@ -63,9 +66,19 @@ class RegisterController extends Controller
      */
     protected function create(array $data)
     {
+        $filename='null';
+        if (Input::file('userimg')->isValid()) {
+          $destinationPath = public_path('uploads/files');
+          $extension = Input::file('userimg')->getClientOriginalExtension();
+          $filename = uniqid().'.'.$extension;
+          Input::file('userimg')->move($destinationPath, $filename);
+
+      }
+
         $user= User::create([
             'name' => $data['name'],
             'email' => $data['email'],
+            'image' => $filename,
             'password' => bcrypt($data['password']),
         ]);
         $user
@@ -73,5 +86,10 @@ class RegisterController extends Controller
        ->attach(Role::where('name', 'user')->first());
 
         return $user;
+    }
+    protected function registered(Request $request, $user)
+    {
+        $this->guard()->logout();
+        return Redirect::route('login');
     }
 }

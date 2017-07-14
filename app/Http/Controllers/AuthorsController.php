@@ -6,6 +6,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use \APP\Author;
 use App\Http\Requests\StoreAuthorRequest;
+use Illuminate\Support\Facades\Redirect;
 
 class AuthorsController extends Controller
 {
@@ -95,11 +96,16 @@ class AuthorsController extends Controller
 
     public function massDestroy(Request $request)
     {
-        $authors = explode(',', $request->input('ids'));
-        foreach ($authors as $author_id) {
-            $author = \App\Author::findOrFail($author_id);
-            $author->delete();
+        $authors = array_filter(explode(',', $request->input('ids')));
+        if (count($authors)==0) {
+          return Redirect::back()->withErrors('No Item Selected');
         }
-        return redirect()->route('authors.index')->with(['message' => 'Authors deleted successfully']);
+        else {
+          foreach ($authors as $author_id) {
+              $author = \App\Author::findOrFail($author_id);
+              $author->delete();
+          }
+          return redirect()->route('authors.index')->with(['message' => 'Authors deleted successfully']);
+        }
     }
 }

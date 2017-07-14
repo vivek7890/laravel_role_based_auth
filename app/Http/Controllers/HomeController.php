@@ -40,7 +40,7 @@ class HomeController extends Controller
     public function indexAdmin(Request $request)
     {
       if($request->user()->hasRole('admin')){
-        return view('homeadmin');
+        return view('homeadmin',['image' => $request->user()->image]);
       }
     }
       /*

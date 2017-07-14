@@ -54,6 +54,9 @@
                             <input type="hidden" name="ids" id="ids" value="" />
                             <input type="submit" value="Delete selected" class="btn btn-danger" />
                         </form>
+                        @if($errors->any())
+                          <h4>{{$errors->first()}}</h4>
+                        @endif
                         {{ $authors->links() }}
                     </div>
                 </div>
