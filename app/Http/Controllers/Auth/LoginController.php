@@ -63,20 +63,20 @@ class LoginController extends Controller
         $findUser = User::where('email',$userSocial->email)->first();
         if ($findUser) {
           Auth::login($findUser);
-          return redirect('/home');
+          return redirect('/user/home');
         }
         else {
           $user = new User;
-          $user->name = $userSocial->name;
-          $user->email = $userSocial->email;
-          $user->email = $userSocial->avatar;
+          $user->name = $userSocial->getName();
+          $user->email = $userSocial->getEmail();
+          $user->image = $userSocial->getAvatar();
           $user->password = bcrypt(123456);
           $user->save();
           $user
          ->roles()
          ->attach(Role::where('name', 'user')->first());
           Auth::login($user);
-          return redirect('/home');
+          return redirect('/user/home');
         }
     }
     public function authenticated(Request $request)

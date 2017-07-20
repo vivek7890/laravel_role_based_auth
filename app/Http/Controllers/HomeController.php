@@ -33,7 +33,7 @@ class HomeController extends Controller
     public function index(Request $request)
     {
         if($request->user()->hasRole('user')){
-          return view('home');
+          return view('home',['image' => $request->user()->image]);
         }
 
     }
