@@ -14,15 +14,16 @@ class CreateFacebooksTable extends Migration
     public function up()
     {
         Schema::create('facebooks', function (Blueprint $table) {
-          $table->increments('id');
-          $table->string('name');
-          $table->string('email')->nullable();
-          $table->string('image');
-          $table->string('password', 60);
-          $table->string('provider');
-          $table->string('provider_id');
-          $table->rememberToken();
-          $table->timestamps();
+            $table->increments('id');
+            $table->string('user_id');
+            $table->string('nick_name')->nullable();
+            $table->string('name');
+            $table->string('email')->nullable();
+            $table->string('avatar');
+            $table->string('token');
+            $table->string('refresh_token')->nullable();
+            $table->string('expires_in')->nullable();
+            $table->timestamps();
         });
     }
 

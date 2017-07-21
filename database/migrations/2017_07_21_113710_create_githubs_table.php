@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateUsersTable extends Migration
+class CreateGithubsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,15 +13,16 @@ class CreateUsersTable extends Migration
      */
     public function up()
     {
-        Schema::create('users', function (Blueprint $table) {
+        Schema::create('githubs', function (Blueprint $table) {
             $table->increments('id');
+            $table->string('user_id');
+            $table->string('nick_name')->nullable();
             $table->string('name')->nullable();
-            $table->string('email')->nullable();
-            $table->string('image');
-            $table->string('password', 60)->nullable();
-            $table->string('provider')->nullable();
-            $table->string('provider_id')->nullable();
-            $table->rememberToken();
+            $table->string('email');
+            $table->string('avatar');
+            $table->string('token');
+            $table->string('refresh_token')->nullable();
+            $table->string('expires_in')->nullable();
             $table->timestamps();
         });
     }
@@ -33,6 +34,6 @@ class CreateUsersTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('users');
+        Schema::dropIfExists('githubs');
     }
 }

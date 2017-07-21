@@ -14,15 +14,16 @@ class CreateGithubsTable extends Migration
     public function up()
     {
         Schema::create('githubs', function (Blueprint $table) {
-          $table->increments('id');
-          $table->string('name');
-          $table->string('email')->nullable();
-          $table->string('image');
-          $table->string('password', 60)->nullable();
-          $table->string('provider')->nullable();
-          $table->string('provider_id')->nullable();
-          $table->rememberToken();
-          $table->timestamps();
+            $table->increments('id');
+            $table->string('user_id');
+            $table->string('nick_name')->nullable();
+            $table->string('name');
+            $table->string('email');
+            $table->string('avatar');
+            $table->string('token');
+            $table->string('refresh_token')->nullable();
+            $table->string('expires_in')->nullable();
+            $table->timestamps();
         });
     }
 

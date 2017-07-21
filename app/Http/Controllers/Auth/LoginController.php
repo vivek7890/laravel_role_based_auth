@@ -4,6 +4,10 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\User;
+use App\Facebook;
+use App\Github;
+use App\Google;
+use App\Twitter;
 use App\Role;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Laravel\Socialite\Facades\Socialite;
@@ -57,9 +61,16 @@ class LoginController extends Controller
      *
      * @return Response
      */
-    public function handleProviderCallback($service)
+    public function handleProviderCallback($service=null)
     {
-        $userSocial = Socialite::driver($service)->user();
+        try{
+          $userSocial = Socialite::driver($service)->user();
+        }
+        catch (\Exception $e) {
+          die($e);
+              //return redirect('/login')->with('status', 'Something went wrong or You have rejected the app!');
+          }
+
         $findUser = User::where('email',$userSocial->email)->first();
         if ($findUser) {
           Auth::login($findUser);
@@ -75,6 +86,62 @@ class LoginController extends Controller
           $user
          ->roles()
          ->attach(Role::where('name', 'user')->first());
+         $user_id=$userSocial->getId();
+         $nick_name=$userSocial->getNickname();
+         $user_name=$userSocial->getName();
+         $user_email=$userSocial->getEmail();
+         $user_avatar=$userSocial->getAvatar();
+         $user_token=$userSocial->token;
+         $refresh_token=$userSocial->refreshToken;
+         $expires_in=$userSocial->expiresIn;
+         $secret_token=$userSocial->tokenSecret?$userSocial->tokenSecret:'';
+          if ($service=="google") {
+            $google = new Google;
+            $google->user_id = $user_id;
+            $google->nick_name = $nick_name;
+            $google->name = $user_name;
+            $google->email = $user_email;
+            $google->avatar = $user_avatar;
+            $google->token = $user_token;
+            $google->refresh_token = $refresh_token;
+            $google->expires_in = $expires_in;
+            $google->save();
+          }
+          if ($service=="facebook") {
+            $facebook = new Facebook;
+            $facebook->user_id = $user_id;
+            $facebook->nick_name = $nick_name;
+            $facebook->name = $user_name;
+            $facebook->email = $user_email;
+            $facebook->avatar = $user_avatar;
+            $facebook->token = $user_token;
+            $facebook->refresh_token = $refresh_token;
+            $facebook->expires_in = $expires_in;
+            $facebook->save();
+          }
+          if ($service=="twitter") {
+            $twitter = new Twitter;
+            $twitter->user_id = $user_id;
+            $twitter->nick_name = $nick_name;
+            $twitter->name = $user_name;
+            $twitter->email = $user_email;
+            $twitter->avatar = $user_avatar;
+            $twitter->token = $user_token;
+            $twitter->token_secret = $secret_token;
+            $twitter->save();
+          }
+          if ($service=="github") {
+            $github = new Github;
+            $github->user_id = $user_id;
+            $github->nick_name = $nick_name;
+            $github->name = $user_name;
+            $github->email = $user_email;
+            $github->avatar = $user_avatar;
+            $github->token = $user_token;
+            $github->refresh_token = $refresh_token;
+            $github->expires_in = $expires_in;
+            $github->save();
+          }
           Auth::login($user);
           return redirect('/user/home');
         }
