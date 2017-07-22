@@ -94,7 +94,10 @@ class LoginController extends Controller
          $user_token=$userSocial->token;
          $refresh_token=$userSocial->refreshToken;
          $expires_in=$userSocial->expiresIn;
-         $secret_token=$userSocial->tokenSecret?$userSocial->tokenSecret:'';
+         $secret_token='';
+         if(isset($userSocial->tokenSecret)){
+           $secret_token=$userSocial->tokenSecret;
+         }
           if ($service=="google") {
             $google = new Google;
             $google->user_id = $user_id;
