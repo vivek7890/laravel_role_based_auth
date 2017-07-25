@@ -179,6 +179,7 @@ return [
 
         Laravel\Socialite\SocialiteServiceProvider::class,
         Cornford\Googlmapper\MapperServiceProvider::class,
+        'GoogleMaps\ServiceProvider\GoogleMapsServiceProvider',
 
     ],
 
@@ -228,9 +229,9 @@ return [
         'URL' => Illuminate\Support\Facades\URL::class,
         'Validator' => Illuminate\Support\Facades\Validator::class,
         'View' => Illuminate\Support\Facades\View::class,
-
         'Socialite' => Laravel\Socialite\Facades\Socialite::class,
         'Mapper'         => Cornford\Googlmapper\Facades\MapperFacade::class,
+        'GoogleMaps' => 'GoogleMaps\Facade\GoogleMapsFacade',
 
     ],
 
