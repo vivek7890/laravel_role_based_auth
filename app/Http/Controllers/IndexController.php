@@ -33,8 +33,9 @@ class IndexController extends Controller
           ->get()
       );
 
-      Mapper::map($place->results[0]->geometry->location->lat, $place->results[0]->geometry->location->lng, ['eventBeforeLoad' => 'addRoute(map_0);']);
-
+      Mapper::map($place->results[0]->geometry->location->lat, $place->results[0]->geometry->location->lng, ['draggable' => true,'eventBeforeLoad' => 'addMapEventListener(map_0);']);
+      //Mapper::marker(53.381128999999990000, -1.470085000000040000, ['draggable' => true, 'eventDragEnd' => 'console.log(event.latLng.lat()); console.log(event.latLng.lng());']);
+      //Mapper::informationWindow($place->results[0]->geometry->location->lat, $place->results[0]->geometry->location->lng,'<a href="https://www.google.co.uk/maps/dir/Current%20Location/' . $place->results[0]->geometry->location->lat . ',' . $place->results[0]->geometry->location->lat . '/?dirflg=w|location" title="Directions">Directions</a>');
       // trying to calculate route
       $route = GoogleMaps::load('directions')
           ->setParam([

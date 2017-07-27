@@ -38,3 +38,9 @@ Route::delete('authors/mass_destroy', 'AuthorsController@massDestroy')->name('au
 Route::resource('authors', 'AuthorsController');
 
 Route::get('/map','IndexController@index');
+Route::get('/multimap',function(){
+  return view('multi_direction');
+});
+Route::get('/dir_map',function(){
+  return view('single_direction');
+});
