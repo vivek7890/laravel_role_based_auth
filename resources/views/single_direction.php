@@ -83,12 +83,13 @@
       // This example requires the Places library. Include the libraries=places
     // parameter when you first load the API. For example:
     // <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&libraries=places">
-
+    var markerCount = 0;
     function initMap() {
     var map = new google.maps.Map(document.getElementById('map'), {
       mapTypeControl: false,
       center: {lat: -33.8688, lng: 151.2195},
-      zoom: 13
+      zoom: 13,
+      mapTypeId: google.maps.MapTypeId.ROADMAP
     });
 
     new AutocompleteDirectionsHandler(map);
@@ -124,6 +125,7 @@
     this.map.controls[google.maps.ControlPosition.TOP_LEFT].push(originInput);
     this.map.controls[google.maps.ControlPosition.TOP_LEFT].push(destinationInput);
     this.map.controls[google.maps.ControlPosition.TOP_LEFT].push(modeSelector);
+    google.maps.event.addDomListener(window, 'load', initMap);
     }
 
     // Sets a listener on a radio button to change the filter type on Places

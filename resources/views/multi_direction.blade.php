@@ -2,7 +2,7 @@
 <html>
   <head>
     <meta charset="utf-8">
-    <title>Dynamic Map</title>
+    <title>Single direction Map</title>
     <style media="screen">
             /* Always set the map height explicitly to define the size of the div
         * element that contains the map. */
@@ -58,118 +58,122 @@
     </style>
   </head>
   <body>
-    <div id="map" style="height: 354px; width:713px;"></div>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDTNTDQNG28NJ4Bj578DF1quOGnSUyyLiM&libraries=places&callback=initMap"
-            async defer></script>
-    <script type="text/javascript">
+    <input id="origin-input" class="controls" type="text"
+    placeholder="Enter an origin location">
 
-      var directionsService ='';
-      var _mapPoints = new Array();
-      var directionsRenderer = '';
+    <input id="destination-input" class="controls" type="text"
+    placeholder="Enter a destination location">
 
-      function initMap() {
+    <div id="mode-selector" class="controls">
+      <input type="radio" name="type" id="changemode-walking" checked="checked">
+      <label for="changemode-walking">Walking</label>
 
-          //DirectionsRenderer() is a used to render the direction
-          _directionsRenderer = new google.maps.DirectionsRenderer();
-          directionsRenderer = new google.maps.DirectionsService();
+      <input type="radio" name="type" id="changemode-transit">
+      <label for="changemode-transit">Transit</label>
 
-          //Set the your own options for map.
-          var myOptions = {
-              zoom: 6,
-              center: new google.maps.LatLng(21.7679, 78.8718),
-              mapTypeId: google.maps.MapTypeId.ROADMAP
-          };
+      <input type="radio" name="type" id="changemode-driving">
+      <label for="changemode-driving">Driving</label>
+  </div>
 
-          //Define the map.
-          var map = new google.maps.Map(document.getElementById("map"), myOptions);
+  <div id="map"></div>
+  <!-- Replace the value of the key parameter with your own API key. -->
+  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDTNTDQNG28NJ4Bj578DF1quOGnSUyyLiM&libraries=places&callback=initMap"
+          async defer></script>
+  <script>
+      // This example requires the Places library. Include the libraries=places
+    // parameter when you first load the API. For example:
+    // <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&libraries=places">
 
-          //Set the map for directionsRenderer
-          _directionsRenderer.setMap(map);
+    function initMap() {
+    var map = new google.maps.Map(document.getElementById('map'), {
+      mapTypeControl: false,
+      center: {lat: -33.8688, lng: 151.2195},
+      zoom: 13
+    });
 
-          //Set different options for DirectionsRenderer mehtods.
-          //draggable option will used to drag the route.
-          _directionsRenderer.setOptions({
-              draggable: true
-          });
+    new AutocompleteDirectionsHandler(map);
+    }
 
-          //Add the doubel click event to map.
-          google.maps.event.addListener(map, "dblclick", function (event) {
-              //Check if Avg Speed value is enter.
-              if ($("#txtAvgSpeed").val() == '') {
-                  alert("Please enter the Average Speed (km/hr).");
-                  $("#txtAvgSpeed").focus();
-                  return false;
-              }
+    /**
+    * @constructor
+    */
+    function AutocompleteDirectionsHandler(map) {
+    this.map = map;
+    this.originPlaceId = null;
+    this.destinationPlaceId = null;
+    this.travelMode = 'WALKING';
+    var originInput = document.getElementById('origin-input');
+    var destinationInput = document.getElementById('destination-input');
+    var modeSelector = document.getElementById('mode-selector');
+    this.directionsService = new google.maps.DirectionsService;
+    this.directionsDisplay = new google.maps.DirectionsRenderer;
+    this.directionsDisplay.setMap(map);
 
-              var _currentPoints = event.latLng;
-              _mapPoints.push(_currentPoints);
-              getRoutePointsAndWaypoints();
-          });
+    var originAutocomplete = new google.maps.places.Autocomplete(
+        originInput, {placeIdOnly: true});
+    var destinationAutocomplete = new google.maps.places.Autocomplete(
+        destinationInput, {placeIdOnly: true});
 
-          //Add an event to route direction. This will fire when the direction is changed.
-          google.maps.event.addListener(_directionsRenderer, 'directions_changed', function () {
-              computeTotalDistanceforRoute(_directionsRenderer.directions);
-          });
+    this.setupClickListener('changemode-walking', 'WALKING');
+    this.setupClickListener('changemode-transit', 'TRANSIT');
+    this.setupClickListener('changemode-driving', 'DRIVING');
 
-        }
+    this.setupPlaceChangedListener(originAutocomplete, 'ORIG');
+    this.setupPlaceChangedListener(destinationAutocomplete, 'DEST');
 
-        function getRoutePointsAndWaypoints() {
-            //Define a variable for waypoints.
-            var _waypoints = new Array();
+    this.map.controls[google.maps.ControlPosition.TOP_LEFT].push(originInput);
+    this.map.controls[google.maps.ControlPosition.TOP_LEFT].push(destinationInput);
+    this.map.controls[google.maps.ControlPosition.TOP_LEFT].push(modeSelector);
+    }
 
-            if (_mapPoints.length > 2) //Waypoints will be come.
-            {
-                for (var j = 1; j < _mapPoints.length - 1; j++) {
-                    var address = _mapPoints[j];
-                    if (address !== "") {
-                        _waypoints.push({
-                            location: address,
-                            stopover: true  //stopover is used to show marker on map for waypoints
-                        });
-                    }
-                }
-                //Call a drawRoute() function
-                drawRoute(_mapPoints[0], _mapPoints[_mapPoints.length - 1], _waypoints);
-            } else if (_mapPoints.length > 1) {
-                //Call a drawRoute() function only for start and end locations
-                drawRoute(_mapPoints[_mapPoints.length - 2], _mapPoints[_mapPoints.length - 1], _waypoints);
-            } else {
-                //Call a drawRoute() function only for one point as start and end locations.
-                drawRoute(_mapPoints[_mapPoints.length - 1], _mapPoints[_mapPoints.length - 1], _waypoints);
-            }
-        }
+    // Sets a listener on a radio button to change the filter type on Places
+    // Autocomplete.
+    AutocompleteDirectionsHandler.prototype.setupClickListener = function(id, mode) {
+    var radioButton = document.getElementById(id);
+    var me = this;
+    radioButton.addEventListener('click', function() {
+      me.travelMode = mode;
+      me.route();
+    });
+    };
 
-        //drawRoute() will help actual draw the route on map.
-      function drawRoute(originAddress, destinationAddress, _waypoints) {
-          //Define a request variable for route .
-          var _request = '';
-
-          //This is for more then two locatins
-          if (_waypoints.length > 0) {
-              _request = {
-                  origin: originAddress,
-                  destination: destinationAddress,
-                  waypoints: _waypoints, //an array of waypoints
-                  optimizeWaypoints: true, //set to true if you want google to determine the shortest route or false to use the order specified.
-                  travelMode: google.maps.DirectionsTravelMode.DRIVING
-              };
-          } else {
-              //This is for one or two locations. Here noway point is used.
-              _request = {
-                  origin: originAddress,
-                  destination: destinationAddress,
-                  travelMode: google.maps.DirectionsTravelMode.DRIVING
-              };
-          }
-
-          //This will take the request and draw the route and return response and status as output
-          directionsService.route(_request, function (_response, _status) {
-              if (_status == google.maps.DirectionsStatus.OK) {
-                  _directionsRenderer.setDirections(_response);
-              }
-          });
+    AutocompleteDirectionsHandler.prototype.setupPlaceChangedListener = function(autocomplete, mode) {
+    var me = this;
+    autocomplete.bindTo('bounds', this.map);
+    autocomplete.addListener('place_changed', function() {
+      var place = autocomplete.getPlace();
+      if (!place.place_id) {
+        window.alert("Please select an option from the dropdown list.");
+        return;
       }
-    </script>
-  </body>
+      if (mode === 'ORIG') {
+        me.originPlaceId = place.place_id;
+      } else {
+        me.destinationPlaceId = place.place_id;
+      }
+      me.route();
+    });
+
+    };
+
+    AutocompleteDirectionsHandler.prototype.route = function() {
+    if (!this.originPlaceId || !this.destinationPlaceId) {
+      return;
+    }
+    var me = this;
+
+    this.directionsService.route({
+      origin: {'placeId': this.originPlaceId},
+      destination: {'placeId': this.destinationPlaceId},
+      travelMode: this.travelMode
+    }, function(response, status) {
+      if (status === 'OK') {
+        me.directionsDisplay.setDirections(response);
+      } else {
+        window.alert('Directions request failed due to ' + status);
+      }
+    });
+    };
+  </script>
+    </body>
 </html>

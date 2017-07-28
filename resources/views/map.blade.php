@@ -57,7 +57,7 @@
                     unitSystem: google.maps.UnitSystem.IMPERIAL,
                     travelMode: 'DRIVING',
                     drivingOptions: {
-                      departureTime: new Date("July 27, 2017 21:13:00"),
+                      departureTime: new Date("July 28, 2017 21:13:00"),
                       trafficModel: 'pessimistic'
                     }
                 };
