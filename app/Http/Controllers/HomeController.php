@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Messages;
+use App\User;
 
 class HomeController extends Controller
 {
@@ -28,13 +30,36 @@ class HomeController extends Controller
              return redirect()->route('/admin/home');
          }
 
-         return redirect()->route('/home');
+         //return redirect()->route('/home');
      }
     public function index(Request $request)
     {
         if($request->user()->hasRole('user')){
           return view('home',['image' => $request->user()->image]);
         }
+
+    }
+    public function chatindex(Request $request)
+    {
+          $messages=Messages::all();
+          $image=$request->user()->image;
+          return view('chat.index',['messages'=>$messages,'image'=>$image]);
+
+    }
+    public function sendmessage(Request $request)
+    {
+          $message=new Messages();
+          $message->from_name=$request->from_name;
+          $message->from_email=$request->from_email;
+          $message->message=$request->message;
+          $message->save();
+          return response()->json($message);
+
+    }
+    public function getmessage()
+    {
+          $message=Messages::all();
+          return response()->json($message);
 
     }
     public function indexAdmin(Request $request)

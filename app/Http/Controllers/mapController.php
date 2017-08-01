@@ -19,7 +19,7 @@ class mapController extends Controller
     //->informationWindow($location->getLatitude(), $location->getLongitude(), '<a href="https://www.google.co.in/maps/dir/Current%20Location/' . $location->getLatitude() . ',' . $location->getLongitude() . '/?dirflg=w|location" title="Directions">Directions</a>');
       //Mapper::informationWindow(12.9716, 77.5946, 'Bangalore' );
       //Mapper::location('Sheffield')->map(['zoom' => 15, 'center' => false, 'marker' => false, 'type' => 'HYBRID', 'overlay' => 'TRAFFIC']);
-      Mapper::location('bangalore')->map(['zoom' => 15, 'center' => false, 'marker' => true, 'type' => 'HYBRID', 'overlay' => 'TRAFFIC']);
+      Mapper::location('bangalore')->map(['zoom' => 15, 'center' => false, 'marker' => true, 'type' => 'HYBRID', 'overlay' => 'TRAFFIC','eventBeforeLoad' => 'addMapEventListener(map);']);
       /*$lines = [
                   [
                       ['latitude' => 13.0827, 'longitude' => 80.2707],

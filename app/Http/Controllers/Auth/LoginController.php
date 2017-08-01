@@ -63,11 +63,12 @@ class LoginController extends Controller
      */
     public function handleProviderCallback($service=null)
     {
+      //$userSocial='';
         try{
           $userSocial = Socialite::driver($service)->user();
         }
         catch (\Exception $e) {
-          die($e);
+
               //return redirect('/login')->with('status', 'Something went wrong or You have rejected the app!');
           }
 

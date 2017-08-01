@@ -25,7 +25,10 @@ Route::get('login/{service}', 'Auth\LoginController@redirectToProvider');
 Route::get('login/{service}/callback', 'Auth\LoginController@handleProviderCallback');
 Route::group(['middleware' => 'AuthUser', 'prefix' => 'user'], function () {
 Route::get('/home', 'HomeController@index')->name('home');
+Route::get('/chat', 'HomeController@chatindex');
 });
+Route::post('/chat/send', 'HomeController@sendmessage');
+Route::post('/chat/get', 'HomeController@getmessage');
 
 
 Route::group(['middleware' => 'AuthAdmin', 'prefix' => 'admin'], function () {
@@ -43,4 +46,7 @@ Route::get('/multimap',function(){
 });
 Route::get('/dir_map',function(){
   return view('single_direction');
+});
+Route::get('/trip_map', function(){
+  return view('/trip_map');
 });
